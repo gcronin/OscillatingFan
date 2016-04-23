@@ -50,19 +50,23 @@ void osp_setup(uint8_t cycles) {
 
 long timeStamp = 0;  // note millis uses timer0, (8bit), so we're fine using this...doesn't conflict with timer2
 boolean goingDown = false;
-int width = 20;  
+int width = 20;  //pulse width for servo
   
   
 void setup()
 {
-osp_setup(20);
-timeStamp = millis();
+  pinMode(10, INPUT_PULLUP);  // attached to switch
+  pinMode(9, OUTPUT);  // attached to motor
+  osp_setup(20);
+  timeStamp = millis();
 }
 
 
 void loop()
 {
-  if(millis() - timeStamp > 1000)
+  
+  
+  if(millis() - timeStamp > 1000)  // has one second passed?
   {
     if(goingDown)  --width;
     else ++width;
@@ -76,14 +80,20 @@ void loop()
   {
     goingDown = true;
   }
+  
 
-  OSP_SET_WIDTH(width);
-  OSP_FIRE();
-  while (OSP_INPROGRESS());
-  delay(20);  //wait 20ms
-
-
-
+  // Oscillate fan only if button is switched on
+  if(!digitalRead(10))
+  {
+    OSP_SET_WIDTH(width);
+    OSP_FIRE();
+    while (OSP_INPROGRESS());
+    delay(20);  //wait 20ms
+  }
+  
+  // Read potentiometer on A0 and set motor speed accordingly
+  int motorSpeed = map(analogRead(A0), 0, 1023, 0, 255);
+  analogWrite(9, motorSpeed);
 
 }
-/*************/
+
