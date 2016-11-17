@@ -59,6 +59,7 @@ void setup()
   pinMode(9, OUTPUT);  // attached to motor
   osp_setup(20);
   timeStamp = millis();
+  
 }
 
 
@@ -83,6 +84,7 @@ void loop()
   
 
   // Oscillate fan only if button is switched on
+ 
   if(!digitalRead(10))
   {
     OSP_SET_WIDTH(width);
